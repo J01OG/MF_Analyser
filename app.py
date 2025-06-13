@@ -84,60 +84,61 @@ else:
     default_stocks = avg_assets.head(5).index.tolist() if not avg_assets.empty else []
     selected_stocks = st.sidebar.multiselect("Select Stocks to Analyze", stocks, default=default_stocks)
 
-# Graph Type
-chart_type = st.sidebar.selectbox("Select Chart Type", ["Line Chart", "Bar Chart", "Area Chart"])
-
 # Filtered data
 filtered = data[data['Month'].isin(selected_months)]
 
-# Pivot entire dataset for % to Net Assets tracking
-pivot_full = filtered.pivot_table(index='Month', columns='Name of Instrument', values='% to Net Assets', aggfunc='sum')
+# Plot each metric separately
+metrics = ["% to Net Assets", "Quantity", "Market value (Rs. In lakhs)"]
+chart_type = st.sidebar.selectbox("Select Chart Type", ["Line Chart", "Bar Chart", "Area Chart"])
 
-st.subheader("📈 Monthly Holding Trends for Selected Stocks")
-if selected_stocks:
-    pivot_selected = pivot_full[selected_stocks]
-    pivot_melted = pivot_selected.reset_index().melt(id_vars='Month', var_name='Stock', value_name='% to Net Assets')
-    pivot_melted['Month'] = pd.Categorical(pivot_melted['Month'], categories=months_sorted, ordered=True)
-    pivot_melted = pivot_melted.sort_values("Month")
+for metric in metrics:
+    st.subheader(f"📈 {metric} Over Time for Selected Stocks")
+    pivot = filtered.pivot_table(index='Month', columns='Name of Instrument', values=metric, aggfunc='sum')
 
-    if chart_type == "Line Chart":
-        fig = px.line(
-            pivot_melted,
-            x="Month",
-            y="% to Net Assets",
-            color="Stock",
-            markers=True,
-            title="% to Net Assets Over Time"
-        )
-    elif chart_type == "Bar Chart":
-        fig = px.bar(
-            pivot_melted,
-            x='Month',
-            y='% to Net Assets',
-            color='Stock',
-            barmode='group',
-            title="% to Net Assets Over Time - Bar Chart"
-        )
-    elif chart_type == "Area Chart":
-        fig = px.area(
-            pivot_melted,
-            x="Month",
-            y="% to Net Assets",
-            color="Stock",
-            title="% to Net Assets Over Time - Area Chart"
-        )
+    if selected_stocks:
+        pivot_selected = pivot[selected_stocks]
+        pivot_melted = pivot_selected.reset_index().melt(id_vars='Month', var_name='Stock', value_name=metric)
+        pivot_melted['Month'] = pd.Categorical(pivot_melted['Month'], categories=months_sorted, ordered=True)
+        pivot_melted = pivot_melted.sort_values("Month")
 
-    fig.update_layout(
-        xaxis_title="Month",
-        yaxis_title="% to Net Assets",
-        legend_title="Stock",
-        template="plotly_white",
-        hovermode="x unified",
-        height=600,
-    )
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.info("Please select at least one stock to view its trend.")
+        if chart_type == "Line Chart":
+            fig = px.line(
+                pivot_melted,
+                x="Month",
+                y=metric,
+                color="Stock",
+                markers=True,
+                title=f"{metric} Over Time"
+            )
+        elif chart_type == "Bar Chart":
+            fig = px.bar(
+                pivot_melted,
+                x='Month',
+                y=metric,
+                color='Stock',
+                barmode='group',
+                title=f"{metric} Over Time - Bar Chart"
+            )
+        elif chart_type == "Area Chart":
+            fig = px.area(
+                pivot_melted,
+                x="Month",
+                y=metric,
+                color="Stock",
+                title=f"{metric} Over Time - Area Chart"
+            )
+
+        fig.update_layout(
+            xaxis_title="Month",
+            yaxis_title=metric,
+            legend_title="Stock",
+            template="plotly_white",
+            hovermode="x unified",
+            height=600,
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.info("Please select at least one stock to view its trend.")
 
 # Show raw data
 if st.checkbox("Show Raw Data"):
