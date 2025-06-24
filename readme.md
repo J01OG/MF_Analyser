@@ -1,6 +1,3 @@
----
-
-````markdown
 # 📊 Mutual Fund Holdings Analyzer
 
 A powerful desktop-friendly Streamlit application to **track**, **analyze**, and **visualize mutual fund portfolios** month-wise using Excel files. This project is split into two core modules:
@@ -22,7 +19,7 @@ Convert individual monthly Excel files (each containing one month's mutual fund 
 ### 📦 How to Use:
 ```bash
 streamlit run preprocessor_app.py
-````
+
 
 1. Upload Excel files (one per month).
 2. Assign the correct month from dropdowns.
