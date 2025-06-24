@@ -1,5 +1,3 @@
-Here’s a professional and user-friendly `README.md` file for your Mutual Fund Analytics project, covering both parts: the **preprocessing app** and the **analytics dashboard**.
-
 ---
 
 ````markdown
@@ -110,13 +108,5 @@ Then double-click the `.exe` file from the `dist/` folder to launch it like a re
 
 **Jayash Prem**
 Feel free to modify or contribute!
+mail me at jayashprem27@gmail.com
 
-```
-
----
-
-Let me know if you want to:
-- Add screenshots of the app
-- Include sample data for demo
-- Link GitHub repo or make installation instructions for others
-```
